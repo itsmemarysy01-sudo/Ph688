@@ -1,70 +1,135 @@
-# GramIO
+PH688 TELEGRAM BOT
 
-<div align="center">
+System Architecture & Deployment
 
-[![Bot API](https://img.shields.io/badge/Bot%20API-9.5-blue?logo=telegram&style=flat&labelColor=000&color=3b82f6)](https://core.telegram.org/bots/api)
-[![npm](https://img.shields.io/npm/v/gramio?logo=npm&style=flat&labelColor=000&color=3b82f6)](https://www.npmjs.org/package/gramio)
-[![npm downloads](https://img.shields.io/npm/dw/gramio?logo=npm&style=flat&labelColor=000&color=3b82f6)](https://www.npmjs.org/package/gramio)
-[![JSR](https://jsr.io/badges/@gramio/core)](https://jsr.io/@gramio/core)
-[![JSR Score](https://jsr.io/badges/@gramio/core/score)](https://jsr.io/@gramio/core)
+1. System Overview
 
-</div>
+The PH688 Telegram bot is built using three main components:
 
-TypeScript/JavaScript Telegram Bot API Framework for create your bots with convenience!
+1. Telegram Bot API – Handles communication between users and the bot.
+2. Java Application (TelegramBots Library) – Processes messages, commands, and interactive menus.
+3. Google Sheets – Stores bot content, commission information, subsidy rules, eligibility requirements, and administrator access.
 
-✨ **Extensible** - Our [plugin](https://gramio.dev/plugins/) and [hook](https://gramio.dev/hooks/overview) system is awesome
+The application is hosted on Vercel.
 
-🛡️ **Type-safe** - Written in TypeScript with love ❤️
+2. How the Bot Works
 
-🌐 **Multi-runtime** - Works on [Node.js](https://nodejs.org/), [Bun](https://bun.sh/) and [Deno](https://deno.com/)
+Step 1: User Interaction
 
-⚙️ **Code-generated** - Many parts are code-generated (for example, [code-generated and auto-published Telegram Bot API types](https://github.com/gramiojs/types))
+Users open "@Ph688MarysyBot" on Telegram and send "/start".
 
-## [Get started](https://gramio.dev/get-started)
+The bot responds with an interactive menu using Telegram inline keyboards.
 
-To create your new bot, you just need to write it to the console:
+Step 2: Menu Navigation
 
-```bash [npm]
-npm create gramio@latest ./bot
-```
+Users select menu buttons to access information:
 
-and GramIO customize your project the way you want it!
+- Team Leader Promotion
+- Commission Details
+- Daily Subsidy
+- Requirements
+- How to Apply
+- Contact Supervisor
+- Language
 
-### Example
+The bot processes button selections through Telegram callback queries and sends the corresponding information.
 
-```typescript
-import { Bot } from "gramio";
+Step 3: Content Retrieval
 
-const bot = new Bot(process.env.TOKEN as string)
-    .command("start", (context) => context.send("Hello!"))
-    .onStart(({ info }) => console.log(`✨ Bot ${info.username} was started!`));
+The Java application retrieves the relevant information from Google Sheets.
 
-bot.start();
-```
+Google Sheets acts as the centralized content-management system, allowing authorized administrators to maintain bot information without changing the application source code.
 
-For more, please see [documentation](https://gramio.dev).
+Step 4: Language Selection
 
-### GramIO in action
+Users can select English or Taglish.
 
-Example which uses some interesting features.
+The bot displays the corresponding language version of its content.
 
-```ts
-import { Bot, format, bold, code } from "gramio";
-import { findOrRegisterUser } from "./utils";
+3. Administrator Management
 
-const bot = new Bot(process.env.BOT_TOKEN as string)
-    .derive("message", async () => {
-        const user = await findOrRegisterUser();
+Authorized administrators can manage bot content through administrative commands.
 
-        return {
-            user,
-        };
-    })
-    .on("message", (context) => {
-        context.user; // typed
+Command| Function
+"/update"| Update bot content
+"/preview"| Preview changes
+"/publish"| Publish approved changes
+"/status"| View bot status
+"/help"| Display administrator instructions
 
-        return context.send(format`
-        Hi, ${bold(context.user.name)}! 
-        You balance: ${code(context.user.balance)}`);
-    });
-```
+Administrator access is controlled through authorized Telegram user IDs.
+
+4. Telegram Update Processing
+
+The bot supports Telegram's two update-delivery approaches:
+
+Webhook
+
+- Telegram sends incoming updates to the application's HTTPS endpoint.
+- Suitable for a hosted application on Vercel.
+- Requires a properly configured webhook endpoint.
+
+Long Polling
+
+- The application continuously requests pending updates from Telegram.
+- Suitable for applications designed to run a persistent polling process.
+
+Only one update-delivery method should be active for the same bot token at a time.
+
+5. Google Sheets Structure
+
+The content-management spreadsheet uses the following worksheets:
+
+Worksheet| Description
+"Bot_Content"| Menu text and bilingual responses
+"Commission_Rules"| Commission information
+"Subsidy_Rules"| Daily subsidy policies
+"Eligibility"| Team Leader requirements
+"Admin_Access"| Authorized administrators
+"Change_Log"| Administrative change history
+
+6. Application Deployment
+
+Hosting platform: Vercel
+Vercel project: "telegram-serverless-bot"
+GitHub repository: "Ghostv13-dev/serverless"
+Production branch: "main"
+
+Previously reported deployment details:
+
+- Deployment status: READY
+- Deployment date: November 9, 2026
+- Production URL: https://telegram-serverless-bot-olive.vercel.app
+
+The Java application is responsible for processing Telegram updates, executing bot logic, communicating with Google Sheets, and sending responses through the Telegram Bot API.
+
+7. System Workflow
+
+Telegram User → Telegram Bot API → Vercel Hosted Java Application → Google Sheets → Java Application → Telegram Bot API → Telegram User
+
+8. Deployment Requirements
+
+The application requires:
+
+- Telegram Bot API credentials.
+- A configured Vercel application.
+- Google Sheets API access and authorization.
+- Administrator Telegram user IDs.
+- A configured webhook endpoint or long-polling process.
+- Secure environment-variable management.
+
+9. Technology Stack
+
+Component| Technology
+Bot platform| Telegram
+Bot framework| TelegramBots Java Library
+Application language| Java
+Hosting| Vercel
+Content management| Google Sheets
+Source control| GitHub
+User interface| Telegram Inline Keyboards
+Update delivery| Webhook or Long Polling
+
+---
+
+PH688 Telegram Bot — System Architecture & Deployment
